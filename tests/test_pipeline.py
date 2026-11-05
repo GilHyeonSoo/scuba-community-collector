@@ -154,7 +154,7 @@ class PipelineTests(unittest.TestCase):
         self.assertNotIn("example", first.author)
 
     def test_scope_avoids_native_id_collision(self):
-        html = (FIXTURES / "dc_post.html").read_text()
+        html = (FIXTURES / "dc_post.html").read_text(encoding="utf-8")
         a = make_source("dcinside", "a")
         b = make_source("dcinside", "b")
         batch = RawBatch("dcinside", html, {"post_id": 10, "url": "https://gall.dcinside.com"})
@@ -185,7 +185,9 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(rows[0]["body"], "'=SUM(A1:A2)")
         target = self.home / "export.jsonl"
         self.assertEqual(self.store.export(target), 205)
-        self.assertEqual(json.loads(target.read_text().splitlines()[0])["body"], "=SUM(A1:A2)")
+        self.assertEqual(
+            json.loads(target.read_text(encoding="utf-8").splitlines()[0])["body"], "=SUM(A1:A2)"
+        )
 
     def test_search_treats_percent_as_literal(self):
         self.stage(RawBatch("reddit", [reddit_item(body="100% useful"), reddit_item("t3_other", "ordinary")]))
@@ -202,7 +204,7 @@ class PipelineTests(unittest.TestCase):
 
     def test_import_rejects_wrong_platform(self):
         path = self.home / "import.json"
-        path.write_text(json.dumps([{"native_id": "1", "platform": "naver_cafe"}]))
+        path.write_text(json.dumps([{"native_id": "1", "platform": "naver_cafe"}]), encoding="utf-8")
         with self.assertRaises(CollectorError):
             self.engine.import_file(self.source, path)
         self.assertEqual(self.store.stats()["total"], 0)
@@ -246,10 +248,10 @@ class PipelineTests(unittest.TestCase):
         settings = ConfigStore(self.home)
         settings.save(self.config)
         self.assertEqual(settings.read(), self.config)
-        settings.path.write_text("broken")
+        settings.path.write_text("broken", encoding="utf-8")
         with self.assertRaises(ValueError):
             settings.read()
-        self.assertEqual(settings.path.read_text(), "broken")
+        self.assertEqual(settings.path.read_text(encoding="utf-8"), "broken")
 
     @unittest.skipUnless(__import__("os").name == "nt", "Windows DPAPI integration")
     def test_windows_dpapi_roundtrip(self):
@@ -275,7 +277,7 @@ class ParserTests(unittest.TestCase):
     def test_dc_html_cleanup(self):
         batch = RawBatch(
             "dcinside",
-            (FIXTURES / "dc_post.html").read_text(),
+            (FIXTURES / "dc_post.html").read_text(encoding="utf-8"),
             {"post_id": 42, "url": "https://gall.dcinside.com"},
         )
         row = normalize(batch, make_source("dcinside"), self.config)[0]
@@ -285,7 +287,9 @@ class ParserTests(unittest.TestCase):
 
     def test_scuba_posts_comments(self):
         batch = RawBatch(
-            "scubaboard", (FIXTURES / "scuba_thread.html").read_text(), {"thread_id": "12", "page": 1}
+            "scubaboard",
+            (FIXTURES / "scuba_thread.html").read_text(encoding="utf-8"),
+            {"thread_id": "12", "page": 1},
         )
         rows = normalize(batch, make_source("scubaboard"), self.config)
         self.assertEqual([row.content_type for row in rows], ["post", "comment"])
@@ -487,7 +491,7 @@ class CursorTests(unittest.TestCase):
         adapter = self.make(
             ScubaBoardCollector, source, {"thread_latest": {"12": 502}, "thread_resume": {"12": saved}}
         )
-        adapter.http.request.return_value.text = (FIXTURES / "scuba_thread.html").read_text()
+        adapter.http.request.return_value.text = (FIXTURES / "scuba_thread.html").read_text(encoding="utf-8")
         list(adapter.collect())
         self.assertTrue(adapter.partial)
         self.assertEqual(adapter.state["queue"], [saved])

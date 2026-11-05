@@ -35,8 +35,9 @@ def parser():
 def main(argv=None):
     args = parser().parse_args(argv)
     cli = bool(args.once or args.replay or args.import_file or args.export or args.list_sources)
-    if hasattr(sys.stdout, "reconfigure"):
-        sys.stdout.reconfigure(encoding="utf-8")
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8")
     home = (args.home or data_directory()).expanduser().resolve()
     lock = None
     try:
