@@ -4,6 +4,9 @@
 
 ## 실제 수행
 
+- [Windows GitHub Actions 검증](https://github.com/GilHyeonSoo/scuba-community-collector/actions/runs/41946043066): CPython 3.12.10에서 **36개 테스트 모두 통과**했습니다. Windows DPAPI 통합 테스트도 포함합니다.
+- 같은 Windows 러너에서 GUI smoke, PyInstaller EXE 빌드, 빌드된 EXE의 가상 시연 데이터 생성 및 JSONL 내보내기를 통과했습니다. `SCUBACollector-Windows-x64` 아티팩트로 실행 파일을 제공합니다.
+- 첫 Windows 실행에서 발견한 UTF-8 한글 예제 파일 읽기 오류를 수정했습니다. CLI 표준 출력·오류도 UTF-8로 통일했고, 기본 스트림이 ASCII일 때 한글 오류 안내가 정상 출력되는 것을 확인했습니다.
 - macOS 26.5 / CPython 3.12.16에서 고정된 직접 의존성을 설치했습니다.
 - `python -m unittest discover -s tests -v`: **36개 중 35개 통과, Windows DPAPI 통합 테스트 1개 건너뜀**.
 - `python scripts/gui_smoke.py`: GUI 구성, 전체 탭, 레코드 상세, 대상 설정창, 인증 설정창, 운영 설정창, 가상 시연 저장소 분리를 확인했습니다. 실제 Windows 네이티브 화면의 외형 검증을 대체하지는 않습니다.
@@ -26,7 +29,7 @@
 
 ## 아직 수행하지 않은 검증
 
-- **실제 Windows 10/11에서 실행, Windows DPAPI 암·복호화, PyInstaller EXE 생성·실행**: 제작 환경이 macOS이므로 수행하지 않았습니다. Windows 빌드 스크립트와 CI에 검증 단계를 포함했습니다. CI는 이 세션에서 실행하지 않았습니다.
+- **개인용 Windows 10/11 PC에서의 직접 사용과 시각적 화면 검토**: Windows GitHub 러너의 자동 검증과 별개로 남아 있습니다. GUI smoke는 창 구성과 기본 동작을 확인하며, 모든 화면의 외형을 검증하지는 않습니다.
 - **Reddit / 네이버 실제 인증 API 호출**: 사용자의 API 키·승인이 제공되지 않아 수행하지 않았습니다. 두 어댑터는 합성 응답으로 페이지 탐색과 변환을 검증했습니다.
 - **실제 디시 갤러리 / ScubaBoard 게시판 전체 연동**: 사용자가 지정한 대상이 없어 수행하지 않았습니다. 합성 HTML로 파싱과 커서를 검증했습니다. robots.txt나 접근 제한에 따라 실제 수집이 보류될 수 있습니다.
 - 장시간 예약 운영, 대용량 성능, 플랫폼별 전체 데이터의 무누락·삭제 동기화는 검증하지 않았습니다.

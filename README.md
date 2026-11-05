@@ -1,10 +1,16 @@
 # SCUBA Collector · Windows 커뮤니티 통합 수집기
 
+[GitHub 소스 코드](https://github.com/GilHyeonSoo/scuba-community-collector) · [Windows 빌드](https://github.com/GilHyeonSoo/scuba-community-collector/actions/workflows/windows.yml)
+
 플랫폼별 Collector와 중앙 정규화 모듈을 분리한 **한국어 데스크톱 프로그램**입니다. Reddit, 디시인사이드, 네이버 카페, ScubaBoard, 앱스토어 그룹을 다루며, Google Play와 App Store는 별도 어댑터로 나눕니다.
 
 수집 대상 관리, 백그라운드 수집, 증분 체크포인트, 원본 보관·재처리, 통합 검색, CSV/JSONL 내보내기, 예약 수집을 제공합니다. 서버나 Docker를 설치하지 않고 한 대의 Windows PC에서 사용할 수 있도록 SQLite를 기본 저장소로 선택했습니다.
 
 ## 1. Windows에서 실행
+
+**빌드된 EXE로 실행:** [검증을 통과한 Windows 빌드](https://github.com/GilHyeonSoo/scuba-community-collector/actions/runs/41946043066)의 **Artifacts → SCUBACollector-Windows-x64**를 내려받아 전체 압축을 해제한 뒤 `SCUBACollector.exe`를 실행합니다. `_internal` 폴더도 함께 있어야 합니다. 이 방식은 Python 설치가 필요하지 않습니다. GitHub 아티팩트는 로그인 후 내려받을 수 있으며 보관 기간은 14일입니다.
+
+**소스 코드로 실행:**
 
 1. **Windows 10/11 64비트**에 [Python 3.11 또는 3.12](https://www.python.org/downloads/windows/)를 설치합니다. 설치 시 **Add python.exe to PATH**를 선택하세요. 일반 배포판의 Tcl/Tk 구성 요소가 필요합니다.
 2. ZIP을 압축 해제합니다. ZIP 내부에서 바로 실행하지 마세요.
@@ -15,7 +21,7 @@
 
 실제 대상을 입력하기 전에 **설정·도움말 → 가상 시연 모드 전환**을 눌러 화면을 살펴볼 수 있습니다. 시연 데이터는 실제 사용자의 발언이 아닌 합성 예시 6건이며, 별도 `demo` 저장소를 사용합니다.
 
-> 이 배포물은 실행 가능한 Python 소스와 Windows 실행·빌드 스크립트입니다. 미리 빌드한 Windows EXE는 포함하지 않습니다. 현재 제작 환경은 macOS이며, 실제 Windows 실행·DPAPI 검증은 아래 Windows 빌드/CI에서 수행하도록 준비했습니다.
+> 소스 ZIP에는 Python 소스와 Windows 실행·빌드 스크립트가 포함됩니다. EXE 빌드는 GitHub Actions에서 별도로 제공합니다. Windows 러너에서 36개 테스트, DPAPI 암·복호화, GUI 기본 동작, EXE 빌드 및 CLI 실행을 확인했습니다. 실제 수집 대상과 API 키에 대한 연동 확인은 별도로 필요합니다.
 
 ## 2. 수집 대상 입력
 
@@ -178,7 +184,7 @@ Unregister-ScheduledTask -TaskName SCUBACollector -Confirm:$false
 
 **Windows에서** `BUILD_WINDOWS.bat`를 실행합니다. 테스트 후 PyInstaller로 `dist\SCUBACollector\SCUBACollector.exe`를 만듭니다. **`dist\SCUBACollector` 폴더 전체**를 복사해야 합니다. 배포 대상 PC에는 Python 설치가 필요하지 않습니다. 이 빌드는 코드 서명을 포함하지 않습니다.
 
-`.github/workflows/windows.yml`도 제공합니다. 이 폴더를 저장소 루트로 올려 수동 실행하면 Windows에서 테스트, GUI smoke, DPAPI 검증, EXE 빌드와 CLI smoke를 수행하고 빌드 폴더를 아티팩트로 남깁니다. 이 세션에서 원격 CI를 실행하거나 저장소에 업로드하지는 않았습니다.
+`.github/workflows/windows.yml`은 GitHub에서 코드 변경 또는 수동 실행 시 Windows 테스트, GUI smoke, DPAPI 검증, EXE 빌드와 CLI smoke를 수행하고 빌드 폴더를 아티팩트로 남깁니다. [빌드 이력](https://github.com/GilHyeonSoo/scuba-community-collector/actions/workflows/windows.yml)에서 성공한 실행의 아티팩트를 내려받을 수 있습니다.
 
 로컬 개발 검증:
 
