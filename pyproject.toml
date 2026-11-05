@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "scuba-community-collector"
+version = "1.0.0"
+description = "Windows desktop community and app review ELT collector"
+requires-python = ">=3.11"
+dependencies = ["beautifulsoup4==4.15.0", "google-play-scraper==1.2.7", "praw==7.8.2", "requests==2.32.5"]
+
+[project.scripts]
+scuba-collector = "collector.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["collector*"]
